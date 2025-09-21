@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Redeem Your Birthday Coupon 🎉</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      background: linear-gradient(135deg, #fef3f3, #ffe0f0, #f0e0ff);
+      color: #5b3e96;
+      text-align: center;
+      padding: 50px 20px;
+    }
+
+    .coupon {
+      background: #fff0f8;
+      border: 4px dashed #f5a9d0;
+      border-radius: 20px;
+      padding: 30px;
+      margin: 20px auto;
+      max-width: 400px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+    }
+
+    .coupon:hover { transform: scale(1.05); }
+
+    h1 {
+      font-size: 28px;
+      color: #ff69b4;
+      margin-bottom: 10px;
+      text-shadow: 2px 2px #ffe0f0;
+    }
+
+    p { font-size: 18px; margin: 15px 0; line-height: 1.5; }
+
+    input {
+      padding: 10px;
+      border-radius: 10px;
+      border: 2px solid #f5a9d0;
+      font-size: 16px;
+      width: 80%;
+      max-width: 250px;
+      margin-top: 10px;
+    }
+
+    button {
+      background: linear-gradient(90deg, #ffb6c1, #ff69b4);
+      border: none;
+      padding: 12px 25px;
+      font-size: 18px;
+      border-radius: 12px;
+      margin-top: 15px;
+      cursor: pointer;
+      color: white;
+      font-weight: bold;
+      box-shadow: 0 5px 10px rgba(255,105,180,0.3);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    button:hover {
+      transform: scale(1.1);
+      box-shadow: 0 8px 15px rgba(255,105,180,0.5);
+    }
+
+    #message { margin-top: 20px; font-size: 18px; font-weight: bold; }
+
+    .confetti {
+      position: fixed;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      top: 0;
+      animation: fall 2s linear infinite;
+    }
+
+    @keyframes fall {
+      0% { transform: translateY(0) rotate(0deg); }
+      100% { transform: translateY(500px) rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <h1>🎈 Redeem Your Coupon! 🎈</h1>
+  <div class="coupon">
+    <p id="coupon-desc">Loading coupon...</p>
+    <input type="text" id="username" placeholder="Enter your name">
+    <br>
+    <button id="redeemBtn">Redeem</button>
+    <p id="message"></p>
+  </div>
+
+  <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+  <script>
+    emailjs.init("YOUR_USER_ID"); // replace with your EmailJS user ID
+
+    // List of your coupons
+    const coupons = [
+      "Free hug one time",
+      "You get to pick my outfit one day",
+      "Playlist made just for u",
+      "Free 10 minute massage",
+      "One day of me being your hype woman",
+      "A personalized note from me",
+      "One I will defend whatever you say pass",
+      "One kiss from me",
+      "I will play catan whenever u want me to - just once",
+      "I will play ludo whenever u want me to - just once",
+      "I will answer every question u ask with a song lyric for 5 minutes",
+      "One free piggyback ride",
+      "Any one tiktok reel u want to do with me",
+      "One free I will say yes to anything reasonable pass",
+      "I will write you a mini poem",
+      "One time I will secretly make u win in catan",
+      "I will be your makeup canvas if u want me to",
+      "I will bring u what u need if u ask me to - not money related"
+    ];
+
+    // Get coupon index & user from URL
+    const params = new URLSearchParams(window.location.search);
+    const index = parseInt(params.get('coupon')) || 0; // 0-17
+    const user = params.get('user') || "friend";
+
+    // Show coupon
+    const couponText = coupons[index] || "Unknown coupon";
+    document.getElementById('coupon-desc').innerHTML = `Hey ${user}, you are redeeming: <strong>${couponText}</strong>!`;
+
+    const redeemBtn = document.getElementById('redeemBtn');
+    const message = document.getElementById('message');
+
+    redeemBtn.addEventListener('click', () => {
+      const name = document.getElementById('username').value.trim();
+      if(!name) { alert("Please enter your name!"); return; }
+
+      // Show confetti
+      for(let i=0;i<50;i++){
+        const c = document.createElement('div');
+        c.classList.add('confetti');
+        c.style.left = Math.random() * window.innerWidth + 'px';
+        c.style.background = `hsl(${Math.random()*360}, 70%, 60%)`;
+        document.body.appendChild(c);
+        setTimeout(()=>c.remove(),2000);
+      }
+
+      message.style.color = "#ff1493";
+      message.innerText = `Redeemed successfully by ${name}! 🎉`;
+
+      // Send notification email
+      emailjs.send("YOUR_SERVICE_ID","YOUR_TEMPLATE_ID",{
+        user_name: name,
+        coupon_name: couponText,
+        friend_name: user
+      }).then(() => console.log("Notification sent"))
+        .catch(err => console.error("Email error:", err));
+    });
+  </script>
+</body>
+</html>
